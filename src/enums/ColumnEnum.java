@@ -1,8 +1,8 @@
 package enums;
 
 public enum ColumnEnum {
-    MA_SV("MaSV"), HO_VA_TEN("Ho va ten"),
-    LOP("Lop"), DIEM_GPA("Diem GPA");
+    MA_SV("Mã Sinh Viên"), HO_VA_TEN("Họ và tên"),
+    LOP("Lớp"), DIEM_GPA("Điểm GPA");
     private String columnName;
 
     ColumnEnum(String columnName) {

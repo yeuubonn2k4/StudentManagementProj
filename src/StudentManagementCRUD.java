@@ -12,11 +12,7 @@ public class StudentManagementCRUD extends JFrame {
     // UI Components
     private JTable table;
     private DefaultTableModel tableModel;
-    private JButton createButton, readButton, updateButton, deleteButton, prevButton, nextButton, deleteAllButton;
-    private TableColumn hiddenColumn; // To store the hidden column
-
-    private JLabel pageLabel;
-
+    private JButton createButton, readButton, updateButton, deleteButton, deleteAllButton;
 
     // Constructor
     public StudentManagementCRUD() {
@@ -41,45 +37,31 @@ public class StudentManagementCRUD extends JFrame {
         readButton = new JButton(ButtonEnum.READ_BUTTON.getButtonValue());
         updateButton = new JButton(ButtonEnum.UPDATE_BUTTON.getButtonValue());
         deleteButton = new JButton(ButtonEnum.DELETE_ONE_RECORD_BUTTON.getButtonValue());
-        prevButton = new JButton(ButtonEnum.PREV_BUTTON.getButtonValue());
-        nextButton = new JButton(ButtonEnum.NEXT_BUTTON.getButtonValue());
         deleteAllButton = new JButton(ButtonEnum.DELETE_ALL_BUTTON.getButtonValue());
-        pageLabel = new JLabel("Trang: 1");
 
         JPanel buttonPanel = new JPanel();
-        JPanel paginationPanel = new JPanel();
         buttonPanel.add(createButton);
         buttonPanel.add(readButton);
         buttonPanel.add(updateButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(deleteAllButton);
 
-        paginationPanel.add(prevButton);
-        paginationPanel.add(pageLabel);
-        paginationPanel.add(nextButton);
         add(buttonPanel, BorderLayout.SOUTH);
-        add(paginationPanel, BorderLayout.NORTH);
 
         // Button action listeners
-        createButton.addActionListener(e -> CreateDialog.openCreateDialog(GlobalVariables.currentPage, GlobalVariables.totalPages,
-                GlobalVariables.recordsPerPage, pageLabel, prevButton, nextButton, this, tableModel, this));
-        readButton.addActionListener(e -> FetchRecordsFromDB.fetchRecords2(GlobalVariables.currentPage,
-                this, pageLabel, prevButton, nextButton, tableModel));
-        updateButton.addActionListener(e -> UpdateDialog.openUpdateDialog(pageLabel,
-                prevButton, nextButton, table, tableModel, this, this
+        createButton.addActionListener(e -> CreateDialog.openCreateDialog( this, tableModel, this));
+        readButton.addActionListener(e -> {
+            FetchRecordsFromDB.fetchRecords(tableModel, this);
+            JOptionPane.showMessageDialog(this, "Hiển thị tất cả thông tin sinh viên thành công.");
+        });
+        updateButton.addActionListener(e -> UpdateDialog.openUpdateDialog(table, tableModel, this, this
                 ));
-        deleteButton.addActionListener(e -> DeleteRecordAction.deleteRecord(pageLabel,
-                prevButton, nextButton, table, this, tableModel));
-        prevButton.addActionListener(e -> FetchRecordsFromDB.fetchRecords2(GlobalVariables.currentPage - 1,
-                this, pageLabel, prevButton, nextButton, tableModel));
-        nextButton.addActionListener(e -> FetchRecordsFromDB.fetchRecords2(GlobalVariables.currentPage + 1,
-                this, pageLabel, prevButton, nextButton, tableModel));
-        deleteAllButton.addActionListener(e -> DeleteRecordAction.deleteAllRecords(tableModel, this, pageLabel, prevButton, nextButton));
+        deleteButton.addActionListener(e -> DeleteRecordAction.deleteRecord(table, this, tableModel));
+        deleteAllButton.addActionListener(e -> DeleteRecordAction.deleteAllRecords(tableModel, this));
 
         // Fetch records at startup
-        FetchRecordsFromDB.fetchTotalRecords(this);
-        FetchRecordsFromDB.fetchRecords2(GlobalVariables.currentPage,
-                this, pageLabel, prevButton, nextButton, tableModel);
+//        FetchRecordsFromDB.fetchRecords(
+//                tableModel,this);
 
         setVisible(true);
     }

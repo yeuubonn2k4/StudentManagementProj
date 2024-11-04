@@ -6,8 +6,7 @@ public class DatabaseConnectionUtils {
     // JDBC variables
     private static final String DB_URL = "jdbc:mysql://localhost:3306/StudentManagementDB";
     private static final String USER = "root";
-    private static final String PASSWORD = "root"; // Change to your MySQL password
-
+    private static final String PASSWORD = "root";
     private static final String jdbcDriver = "com.mysql.jdbc.Driver";
 
         // Method to establish a connection to the database

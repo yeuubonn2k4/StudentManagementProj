@@ -1,3 +1,5 @@
+import enums.FieldEnum;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -8,20 +10,18 @@ import java.sql.SQLException;
 public class CreateDialog {
     // Method to open a dialog for creating a new record
     public static void openCreateDialog(
-            int page, int totalPage, int recordPerPage, JLabel pageLabel,
-            JButton prevButton, JButton nextButton,
             Frame frame, DefaultTableModel tableModel, Component parentComponent) {
         JDialog dialog = new JDialog(frame, "Thêm sinh viên", true);
         dialog.setSize(300, 300);
         dialog.setLayout(new GridLayout(5, 2));
 
-        JLabel labelMaSV = new JLabel("MaSV:");
+        JLabel labelMaSV = new JLabel(FieldEnum.MA_SV.getFieldName());
         JTextField fieldMaSV = new JTextField();
-        JLabel labelHoVaTen = new JLabel("Ho va ten:");
+        JLabel labelHoVaTen = new JLabel(FieldEnum.HO_VA_TEN.getFieldName());
         JTextField fieldHoVaTen = new JTextField();
-        JLabel labelLop = new JLabel("Lop:");
+        JLabel labelLop = new JLabel(FieldEnum.LOP.getFieldName());
         JTextField fieldLop = new JTextField();
-        JLabel labelDiemGPA = new JLabel("Diem GPA:");
+        JLabel labelDiemGPA = new JLabel(FieldEnum.DIEM_GPA.getFieldName());
         JTextField fieldDiemGPA = new JTextField();
 
         dialog.add(labelMaSV);
@@ -37,23 +37,27 @@ public class CreateDialog {
         JButton cancelButton = new JButton("Quay lại");
 
         addButton.addActionListener(e -> {
+            if (!FieldValidation.validateFields(parentComponent, fieldMaSV.getText(), fieldHoVaTen.getText(), fieldLop.getText())) {
+                return;
+            }
             try (Connection conn = DatabaseConnectionUtils.getConnection();
                  PreparedStatement ps = conn.prepareStatement(
-                         "INSERT INTO students (maSV, hoVaTen, lop, diemGPA) VALUES (?, ?, ?, ?)")) {
+                         "INSERT INTO SinhVien (maSV, hoVaTen, lop, diemGPA) VALUES (?, ?, ?, ?)")) {
                 ps.setString(1, fieldMaSV.getText());
                 ps.setString(2, fieldHoVaTen.getText());
                 ps.setString(3, fieldLop.getText());
-                ps.setFloat(4, Float.parseFloat(fieldDiemGPA.getText()));
+                ps.setDouble(4, Double.parseDouble(fieldDiemGPA.getText()));
                 ps.executeUpdate();
-                FetchRecordsFromDB.fetchRecords2(GlobalVariables.currentPage,
-                         parentComponent, pageLabel,
-                        prevButton, nextButton,
-                        tableModel);
+                FetchRecordsFromDB.fetchRecords(tableModel, parentComponent);
                 JOptionPane.showMessageDialog(parentComponent, "Tạo dữ liệu sinh viên thành công!");
                 dialog.dispose();
             } catch (SQLException ex) {
                 ex.printStackTrace();
-                JOptionPane.showMessageDialog(parentComponent, "Lỗi tạo dữ liệu sinh viên: " + ex.getMessage());
+                if (ex.getMessage().contains("Duplicate entry")) {
+                    JOptionPane.showMessageDialog(parentComponent, "Mã sinh viên " + fieldMaSV.getText() + " đã tồn tại!");
+                } else {
+                    JOptionPane.showMessageDialog(parentComponent, "Lỗi tạo dữ liệu sinh viên: " + ex.getMessage());
+                }
             } catch (ClassNotFoundException ex) {
                 throw new RuntimeException(ex);
             } catch (InstantiationException ex) {

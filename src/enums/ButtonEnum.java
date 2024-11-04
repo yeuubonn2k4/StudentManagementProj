@@ -1,9 +1,8 @@
 package enums;
 
 public enum ButtonEnum {
-    CREATE_BUTTON("Tạo"), UPDATE_BUTTON("Cập nhật"), DELETE_ONE_RECORD_BUTTON("Xóa"),
-    READ_BUTTON("Đọc"), DELETE_ALL_BUTTON("Xóa tất cả"),
-    PREV_BUTTON("Quay lại"), NEXT_BUTTON("Tiếp")
+    CREATE_BUTTON("Thêm"), UPDATE_BUTTON("Cập nhật"), DELETE_ONE_RECORD_BUTTON("Xóa"),
+    READ_BUTTON("Hiển thị"), DELETE_ALL_BUTTON("Reset")
     ;
     private String buttonName;
 
